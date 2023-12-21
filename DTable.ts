@@ -40,6 +40,8 @@ interface Schema {
         data: {[key: string] : any}[],
         filters: {[key: string] : Actions},
         requests: {[key: string] : Actions},
+        pagination: number,
+        defaultRequest?: string
     }
 }
 
@@ -118,11 +120,27 @@ const TabComponents = ref<Schema>({
                         {id: 4, name: 'Jlenia', surname: 'Ilarda'},
                         {id: 5, name: 'Claudia', surname: 'Di Peri'},  
                         {id: 6, name: 'Michela', surname: 'Di Davide'}, 
+                        {id: 7, name: 'John', surname: 'Doe'}, 
+                        {id: 8, name: 'Mick', surname: 'Stern'}, 
+                        {id: 9, name: 'Steve', surname: 'Harriss'}, 
+                        {id: 10, name: 'Michael', surname: 'Jordan'}, 
+                        {id: 11, name: 'George', surname: 'Bouble'}, 
+                        {id: 12, name: 'Bob', surname: 'Berg'}, 
+                        {id: 13, name: 'Frank', surname: 'Gambale'}, 
+                        {id: 14, name: 'Joe', surname: 'Satriani'}, 
+                        {id: 15, name: 'John', surname: 'Smith'}, 
+                        {id: 16, name: 'Lars', surname: 'Ulric'}, 
+                        {id: 17, name: 'David', surname: 'Rossi'}, 
+                        {id: 18, name: 'Michele', surname: 'Rossi'}, 
+                        {id: 19, name: 'Stefano', surname: 'Rossi'}, 
+                        {id: 20, name: 'Mario', surname: 'Rossi'}, 
                     ]
                 },
                 class: ''
-            },         
-        }
+            },
+        },
+        pagination: 3,
+        defaultRequest: 'Small data'
     }
 })
 

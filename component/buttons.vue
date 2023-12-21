@@ -10,8 +10,10 @@
 </script>
 
 <template>
-    <div v-for="button, key in componentSchema.buttons">
-        <button @click="button.method(Number(value))">{{ key }}</button>
+    <div style="display: flex;">
+        <div v-for="button, key in componentSchema.buttons">
+            <button @click="button.method(Number(value))">{{ key }}</button>
+        </div>
     </div>
 </template>
 
