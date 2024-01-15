@@ -169,6 +169,12 @@
 <div class="dTable-container">
 
     <div v-if="showSidebar" class="dTable-sidebar">
+        <div>
+            <div>
+                Filtri
+            </div>
+            <button @click="showSidebar = false">X</button>
+        </div>
         <div v-for="filter, key in TabComponents[id].filters">
             <label><input type="checkbox" @change="filter.active = !filter.active; setData()" />{{ key }}</label>
         </div>
@@ -190,66 +196,73 @@
         </div>
 
         <div class="dTable-content">
-            <div class="dTable-columns">
-                <div v-for="column, i in columns" class="dTable-column">
-                    <div>
-                        {{ TabComponents[id].columns[column].label }} 
-                    </div>
-                    <div v-if="TabComponents[id].columns[column].searchable" style="height: 40px;">
-                        <div>
-                            <button :class="sortActive == (i + 'DESC') ? 'sort-active' : null" @click="sortActive = i + 'DESC'; sortBy = {key: i, sort: 'DESC'}; setData();">^</button>
-                        </div>
-                        <div>
-                            <button :class="sortActive == (i + 'ASC') ? 'sort-active' : null" @click="sortActive = i + 'ASC'; sortBy = {key: i, sort: 'ASC'}; setData();">v</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div>
+                <div class="dTable-columns">
+                    <div v-for="column, i in columns" class="dTable-column">
 
-            <div v-for="row in data?.slice(pagination.from, pagination.to)" class="dTable-row">
-                <div v-for="cell, i in row" class="dTable-cell">
-                    <component
-                        :value="cell"
-                        :componentSchema="TabComponents[id].columns[columns[i]]"
-                        :is="DTableRoot[TabComponents[id].columns[columns[i]].component]"
-                    />
+                        <div v-if="TabComponents[id].columns[column].searchable" style="height: 40px;">
+                            <div>
+                                <button :class="sortActive == (i + 'DESC') ? 'sort-active' : null" @click="sortActive = i + 'DESC'; sortBy = {key: i, sort: 'DESC'}; setData();">^</button>
+                            </div>
+                            <div>
+                                <button :class="sortActive == (i + 'ASC') ? 'sort-active' : null" @click="sortActive = i + 'ASC'; sortBy = {key: i, sort: 'ASC'}; setData();">v</button>
+                            </div>
+                        </div>
+
+                        <div class="column-text">
+                            {{ TabComponents[id].columns[column].label }} 
+                        </div>
+                    </div>
                 </div>
-            </div>        
+
+                <div v-for="row in data?.slice(pagination.from, pagination.to)" class="dTable-row">
+                    <div v-for="cell, i in row" class="dTable-cell">
+                        <component
+                            :value="cell"
+                            :componentSchema="TabComponents[id].columns[columns[i]]"
+                            :is="DTableRoot[TabComponents[id].columns[columns[i]].component]"
+                        />
+                    </div>
+                    
+                </div> 
+            </div>           
+
+            <div v-if="pagination.to !== 0" class="pagination">
+                <button v-if="pagination.from !== 0" @click="paginationIndex = 1; pagination = {from : 0, to : TabComponents[id].pagination}">1</button> 
+                <button v-if="pagination.from !== 0" @click="pagination = {from : pagination.from - TabComponents[id].pagination, to : pagination.to - TabComponents[id].pagination}; paginationIndex-= 1;">Prev</button> 
+                <div class="pagination-numered" v-if="getPaginationLenght() > 1">
+                    <div v-for="n in getPaginationLenght()">
+                        <button :class="paginationIndex == n + 1 ? 'pagination-index' : null" @click="paginationIndex = n + 1; pagination = {from: n * TabComponents[id].pagination , to: (n * TabComponents[id].pagination) + TabComponents[id].pagination}">{{ n + 1 }}</button>
+                    </div>
+                </div>
+                <button v-if="pagination.to < data?.length" @click="pagination = {from : pagination.from + TabComponents[id].pagination, to : pagination.to + TabComponents[id].pagination}; paginationIndex+= 1;">Next</button> 
+            </div>            
         </div>
 
     </div>
 </div>
 
-<div v-if="pagination.to !== 0" class="pagination">
-    <button v-if="pagination.from !== 0" @click="paginationIndex = 1; pagination = {from : 0, to : TabComponents[id].pagination}">1</button> 
-    <button v-if="pagination.from !== 0" @click="pagination = {from : pagination.from - TabComponents[id].pagination, to : pagination.to - TabComponents[id].pagination}; paginationIndex-= 1;">Prev</button> 
-    <div v-if="getPaginationLenght() > 1">
-        <div v-for="n in getPaginationLenght()">
-            <button :class="paginationIndex == n + 1 ? 'pagination-index' : null" @click="paginationIndex = n + 1; pagination = {from: n * TabComponents[id].pagination , to: (n * TabComponents[id].pagination) + TabComponents[id].pagination}">{{ n + 1 }}</button>
-        </div>
-    </div>
-    <button v-if="pagination.to < data?.length" @click="pagination = {from : pagination.from + TabComponents[id].pagination, to : pagination.to + TabComponents[id].pagination}; paginationIndex+= 1;">Next</button> 
-</div>
 </template>
 
 <style scoped>
     .dTable-container{
         display: flex;
-        width: 100%;
-        max-width: 1500px;
-        min-height: 50vh;
-        background: rgb(235, 229, 229);
+        width: fit-content;
     }
 
     .dTable-sidebar{
         width: 300px;
-        background: red;
+        background: rgb(238, 245, 255);
     }
 
     .dTable-header{
         display: flex;
+        justify-content: start;
+        align-items: center;
+        padding-left: 15px;
+        column-gap: 15px;
         height: 50px;
-        background: gray;
+        background: rgb(249, 251, 255);
     }
 
     .dTable-body{
@@ -258,20 +271,28 @@
 
     .dTable-content{
         width: 100%;
-        height: 100%;
         overflow: scroll;
 
     }
 
     .dTable-columns{
-        background: blue;
+        background: rgb(16, 160, 232);
         height: 40px;
     }
 
     .dTable-column{
         display: flex;
-        justify-content: space-between;
+        column-gap: 8px;
         align-items: center;
+        color: rgb(0, 46, 107);
+    }
+
+    .column-text{
+        text-align: center;
+        background: rgba(255, 255, 255, 0.922);
+        width: 100%;
+        height: 25px;
+        border-radius: 5px 5px 0px 0px;
     }
 
     .dTable-column button{
@@ -279,7 +300,9 @@
         width: 20px;
         margin-top: 1px;
         border: none;
-        background: transparent;
+        background: rgba(188, 240, 238, 0.173);
+        color:rgb(106, 210, 255);
+        border-radius: 3px;
     }
 
     .dTable-row{
@@ -287,7 +310,8 @@
     }
 
     .dTable-cell{
-
+        display: flex;
+        align-items: center;
     }
 
     .dTable-columns,
@@ -296,16 +320,16 @@
         display: flex;
         justify-content: flex-start;
         align-items: start;
-        border-bottom: solid;
+        border-bottom: solid 1px rgb(134, 193, 193);
     }
 
     .dTable-row:nth-child(odd)
     {
-        background: red;
+        background: rgb(235, 254, 255);
     }
     .dTable-row:nth-child(even)
     {
-        background: orange;
+        background: rgb(245, 251, 255);
     }
 
     .dTable-column,
@@ -314,7 +338,7 @@
         width: 300px;
         height: 30px;
         padding: 3px;
-        border-left: solid;
+        border-left: solid 1px rgb(134, 193, 193);
     }
 
     .request-active{
@@ -323,11 +347,40 @@
 
     .sort-active
     {
-        background: green !important;
+        background: rgba(0, 251, 255, 0.786) !important;
+        color: black !important;
     }
 
     .pagination-index{
-        background: blue;
+        background: rgb(123, 242, 255) !important;
+        border-radius: 4px;
+        color: rgb(9, 72, 140) !important;
+    }
+
+    .pagination{
+        display: flex;
+        justify-content: end;
+        padding-right: 15px;
+        height: 30px;
+        align-items: center;
+        column-gap: 10px;
+        background: rgb(16, 160, 232);
+    }
+    .pagination-numered{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        column-gap: 5px;
+        background: rgba(2, 74, 207, 0.301);
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .pagination-numered > div > button
+    {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.837);
+        border: none;
     }
 
     button:hover

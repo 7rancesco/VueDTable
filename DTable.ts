@@ -139,7 +139,7 @@ const TabComponents = ref<Schema>({
                 class: ''
             },
         },
-        pagination: 3,
+        pagination: 5,
         defaultRequest: 'Small data'
     }
 })
